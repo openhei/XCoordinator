@@ -6,12 +6,13 @@
 //  Copyright © 2018 QuickBird Studios. All rights reserved.
 //
 
-class CoordinatorPreviewingDelegateObject<TransitionType: TransitionProtocol>: NSObject, UIViewControllerPreviewingDelegate {
+internal class CoordinatorPreviewingDelegateObject<TransitionType: TransitionProtocol>: NSObject, UIViewControllerPreviewingDelegate {
 
     // MARK: - Stored properties
 
-    var context: UIViewControllerPreviewing? = nil
-    weak var viewController: UIViewController?
+    internal var context: UIViewControllerPreviewing? = nil
+
+    private weak var viewController: UIViewController?
 
     private let transition: () -> TransitionType
     private let performer: AnyTransitionPerformer<TransitionType>
@@ -19,7 +20,7 @@ class CoordinatorPreviewingDelegateObject<TransitionType: TransitionProtocol>: N
 
     // MARK: - Init
 
-    init(transition: @escaping () -> TransitionType, performer: AnyTransitionPerformer<TransitionType>, completion: PresentationHandler?) {
+    internal init(transition: @escaping () -> TransitionType, performer: AnyTransitionPerformer<TransitionType>, completion: PresentationHandler?) {
         self.transition = transition
         self.performer = performer
         self.completion = completion
@@ -27,7 +28,7 @@ class CoordinatorPreviewingDelegateObject<TransitionType: TransitionProtocol>: N
 
     // MARK: - Methods
 
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+    internal func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let viewController = viewController {
             return viewController
         }
@@ -38,9 +39,8 @@ class CoordinatorPreviewingDelegateObject<TransitionType: TransitionProtocol>: N
         return viewController
     }
 
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+    internal func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         _ = performer.performTransition(transition(), with: TransitionOptions.default)
         completion?()
     }
-
 }
