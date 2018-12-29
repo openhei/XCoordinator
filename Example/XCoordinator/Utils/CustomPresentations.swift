@@ -6,9 +6,10 @@
 //  Copyright © 2018 QuickBird Studios. All rights reserved.
 //
 
-
 import UIKit
 import XCoordinator
+
+// swiftlint:disable force_unwrapping
 
 private let defaultAnimationDuration: TimeInterval = 0.35
 
@@ -17,7 +18,6 @@ extension Animation {
         presentation: StaticTransitionAnimation.scalePresentation,
         dismissal: StaticTransitionAnimation.scaleDismissal
     )
-
 
     static let interactiveScale = Animation(
         presentation: InteractiveTransitionAnimation.scalePresentation,
@@ -79,7 +79,7 @@ extension StaticTransitionAnimation {
         containerView.sendSubviewToBack(toView)
 
         toView.alpha = 0
-        let verySmall: CGFloat = 0.0001
+        let verySmall: CGFloat = 0.000_1
 
         UIView.animate(withDuration: defaultAnimationDuration, animations: {
             fromView.transform = CGAffineTransform(scaleX: verySmall, y: verySmall)
@@ -95,6 +95,8 @@ extension StaticTransitionAnimation {
 
 extension InteractiveTransitionAnimation {
     static let fade = InteractiveTransitionAnimation(transitionAnimation: StaticTransitionAnimation.fade)
-    static let scalePresentation = InteractiveTransitionAnimation(transitionAnimation: StaticTransitionAnimation.scalePresentation)
-    static let scaleDismissal = InteractiveTransitionAnimation(transitionAnimation: StaticTransitionAnimation.scaleDismissal)
+    static let scalePresentation =
+        InteractiveTransitionAnimation(transitionAnimation: StaticTransitionAnimation.scalePresentation)
+    static let scaleDismissal =
+        InteractiveTransitionAnimation(transitionAnimation: StaticTransitionAnimation.scaleDismissal)
 }

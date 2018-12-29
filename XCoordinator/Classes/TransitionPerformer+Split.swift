@@ -19,7 +19,8 @@ extension TransitionPerformer where TransitionType.RootViewController: UISplitVi
     }
 
     // TODO: Add animations
-    func showDetail(_ viewController: UIViewController, with options: TransitionOptions, completion: PresentationHandler?) {
+    func showDetail(_ viewController: UIViewController,
+                    with options: TransitionOptions, completion: PresentationHandler?) {
 
         CATransaction.begin()
         CATransaction.setCompletionBlock(completion)

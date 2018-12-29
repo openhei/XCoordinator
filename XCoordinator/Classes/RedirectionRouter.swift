@@ -28,19 +28,26 @@ open class RedirectionRouter<SuperRoute: Route, RouteType: Route>: Router {
 
     // MARK: - Init
 
-    public init(viewController: UIViewController, superRouter: AnyRouter<SuperRoute>, map: ((RouteType) -> SuperRoute)?) {
+    public init(viewController: UIViewController,
+                superRouter: AnyRouter<SuperRoute>,
+                map: ((RouteType) -> SuperRoute)?) {
         self.superRouter = superRouter
         self._map = map
         self.viewControllerBox = ReferenceBox(viewController)
     }
 
-    public convenience init<RouterType: Router>(viewController: UIViewController, superRouter: RouterType, map: ((RouteType) -> SuperRoute)?) where RouterType.RouteType == SuperRoute {
+    public convenience init<RouterType: Router>(viewController: UIViewController,
+                                                superRouter: RouterType,
+                                                map: ((RouteType) -> SuperRoute)?)
+        where RouterType.RouteType == SuperRoute {
         self.init(viewController: viewController, superRouter: AnyRouter(superRouter), map: map)
     }
 
     // MARK: - Methods
 
-    open func contextTrigger(_ route: RouteType, with options: TransitionOptions, completion: ContextPresentationHandler?) {
+    open func contextTrigger(_ route: RouteType,
+                             with options: TransitionOptions,
+                             completion: ContextPresentationHandler?) {
         superRouter.contextTrigger(mapToSuperRoute(route), with: options, completion: completion)
     }
 

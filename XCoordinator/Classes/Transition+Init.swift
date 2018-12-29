@@ -8,7 +8,10 @@
 
 extension Transition {
     public static func presentOnRoot(_ presentable: Presentable, animation: Animation? = nil) -> Transition {
-        return Transition(presentables: [presentable], animation: animation?.presentationAnimation) { options, performer, completion in
+        return Transition(
+            presentables: [presentable],
+            animation: animation?.presentationAnimation
+        ) { options, performer, completion in
             performer.present(
                 onRoot: true,
                 presentable.viewController,
@@ -21,7 +24,10 @@ extension Transition {
     }
 
     public static func present(_ presentable: Presentable, animation: Animation? = nil) -> Transition {
-        return Transition(presentables: [presentable], animation: animation?.presentationAnimation) { options, performer, completion in
+        return Transition(
+            presentables: [presentable],
+            animation: animation?.presentationAnimation
+        ) { options, performer, completion in
             performer.present(
                 onRoot: false,
                 presentable.viewController,
@@ -46,7 +52,10 @@ extension Transition {
     }
 
     public static func dismissToRoot(animation: Animation? = nil) -> Transition {
-        return Transition(presentables: [], animation: animation?.dismissalAnimation) { options, performer, completion in
+        return Transition(
+            presentables: [],
+            animation: animation?.dismissalAnimation
+        ) { options, performer, completion in
             performer.dismiss(
                 toRoot: true,
                 with: options,
@@ -57,7 +66,10 @@ extension Transition {
     }
 
     public static func dismiss(animation: Animation? = nil) -> Transition {
-        return Transition(presentables: [], animation: animation?.dismissalAnimation) { options, performer, completion in
+        return Transition(
+            presentables: [],
+            animation: animation?.dismissalAnimation
+        ) { options, performer, completion in
             performer.dismiss(
                 toRoot: false,
                 with: options,
@@ -68,13 +80,16 @@ extension Transition {
     }
 
     public static func none() -> Transition {
-        return Transition(presentables: [], animation: nil) { options, performer, completion in
+        return Transition(presentables: [], animation: nil) { _, _, completion in
             completion?()
         }
     }
 
     public static func multiple<C: Collection>(_ transitions: C) -> Transition where C.Element == Transition {
-        return Transition(presentables: transitions.flatMap { $0.presentables }, animation: nil) { options, performer, completion in
+        return Transition(
+            presentables: transitions.flatMap { $0.presentables },
+            animation: transitions.compactMap { $0.animation }.last
+        ) { options, performer, completion in
             guard let firstTransition = transitions.first else {
                 completion?()
                 return
@@ -92,7 +107,10 @@ extension Transition {
 
     public static func route<C: Coordinator>(_ route: C.RouteType, on coordinator: C) -> Transition {
         let transition = coordinator.prepareTransition(for: route)
-        return Transition(presentables: transition.presentables, animation: transition.animation) { options, _, completion in
+        return Transition(
+            presentables: transition.presentables,
+            animation: transition.animation
+        ) { options, _, completion in
             coordinator.performTransition(transition, with: options, completion: completion)
         }
     }
@@ -105,9 +123,10 @@ extension Transition {
     }
 
     @available(iOS 9.0, *)
-    public static func registerPeek(for source: Container, transition: @escaping @autoclosure () -> Transition) -> Transition {
-        return Transition(presentables: [], animation: nil) { options, performer, completion in
-            return performer.registerPeek(
+    public static func registerPeek(for source: Container,
+                                    transition: @escaping @autoclosure () -> Transition) -> Transition {
+        return Transition(presentables: [], animation: nil) { _, performer, completion in
+            performer.registerPeek(
                 from: source.view,
                 transitionGenerator: { transition() },
                 completion: completion
@@ -116,14 +135,17 @@ extension Transition {
     }
 
     @available(iOS 9.0, *)
-    public static func registerPeek<C: Coordinator>(for source: Container, route: C.RouteType, coordinator: C) -> Transition where C.TransitionType == Transition {
+    public static func registerPeek<C: Coordinator>(for source: Container,
+                                                    route: C.RouteType,
+                                                    coordinator: C) -> Transition where C.TransitionType == Transition {
         return .registerPeek(for: source, transition: coordinator.prepareTransition(for: route))
     }
 }
 
 extension Coordinator {
     @available(iOS 9.0, *)
-    public func registerPeek<RootViewController>(for source: Container, route: RouteType) -> Transition<RootViewController> where Self.TransitionType == Transition<RootViewController> {
+    public func registerPeek<RootViewController>(for source: Container, route: RouteType)
+        -> Transition<RootViewController> where Self.TransitionType == Transition<RootViewController> {
         return .registerPeek(for: source, route: route, coordinator: self)
     }
 }
