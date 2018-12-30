@@ -100,7 +100,7 @@ open class InteractiveTransitionAnimation: NSObject, TransitionAnimation {
     public convenience init(transitionAnimation: StaticTransitionAnimation, generateDefaultInteractionController: @escaping () -> PercentDrivenInteractionController?) {
         self.init(
             duration: transitionAnimation.duration,
-            transition: transitionAnimation.performAnimation,
+            transition: transitionAnimation.animateTransition,
             generateInteractionController: generateDefaultInteractionController
         )
     }
@@ -115,7 +115,7 @@ open class InteractiveTransitionAnimation: NSObject, TransitionAnimation {
     public convenience init(transitionAnimation: StaticTransitionAnimation) {
         self.init(
             duration: transitionAnimation.duration,
-            transition: transitionAnimation.performAnimation
+            transition: transitionAnimation.animateTransition
         )
     }
 
