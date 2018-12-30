@@ -9,9 +9,25 @@
 public typealias PageTransition = Transition<UIPageViewController>
 
 extension Transition where RootViewController: UIPageViewController {
-    public static func set(_ first: Presentable, _ second: Presentable? = nil, direction: UIPageViewController.NavigationDirection) -> PageTransition {
+
+    ///
+    /// Sets the current page(s) of the rootViewController. Make sure to set
+    /// `UIPageViewController.isDoubleSided` to the appropriate setting before executing this transition.
+    ///
+    /// - Parameter first:
+    ///     The first page being shown. If second is specified as `nil`, this reflects a single page
+    ///     being shown.
+    ///
+    /// - Parameter second:
+    ///     The second page being shown. This page is optional, as your rootViewController can be used
+    ///     with `isDoubleSided` enabled or not.
+    ///
+    /// - Parameter direction:
+    ///     The direction in which the transition should be animated.
+    ///
+    public static func set(_ first: Presentable, _ second: Presentable? = nil, direction: UIPageViewController.NavigationDirection) -> Transition {
         let presentables = [first, second].compactMap { $0 }
-        return PageTransition(presentables: presentables, animation: nil) { options, performer, completion in
+        return Transition(presentables: presentables, animation: nil) { options, performer, completion in
             performer.set(
                 presentables.map { $0.viewController },
                 direction: direction,
