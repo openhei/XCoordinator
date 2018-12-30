@@ -7,6 +7,21 @@
 //
 
 extension Transition {
+
+    ///
+    /// Transition to present the given presentable on the rootViewController.
+    ///
+    /// The present-transition might also be helpful as it always presents on top of what is currently
+    /// presented.
+    ///
+    /// - Parameter presentable:
+    ///     The presentable to be presented.
+    ///
+    /// - Parameter animation:
+    ///     The animation to be set as the presentable's transitioningDelegate. Specify `nil` to not override
+    ///     the current transitioningDelegate and `Animation.default` to reset the transitioningDelegate to use
+    ///     the default UIKit animations.
+    ///
     public static func presentOnRoot(_ presentable: Presentable, animation: Animation? = nil) -> Transition {
         return Transition(presentables: [presentable], animation: animation?.presentationAnimation) { options, performer, completion in
             performer.present(
@@ -20,6 +35,18 @@ extension Transition {
         }
     }
 
+    ///
+    /// Transition to present the given presentable. It uses the rootViewController's presentedViewController,
+    /// if present, otherwise it is equivalent to `presentOnRoot`.
+    ///
+    /// - Parameter presentable:
+    ///     The presentable to be presented.
+    ///
+    /// - Parameter animation:
+    ///     The animation to be set as the presentable's transitioningDelegate. Specify `nil` to not override
+    ///     the current transitioningDelegate and `Animation.default` to reset the transitioningDelegate to use
+    ///     the default UIKit animations.
+    ///
     public static func present(_ presentable: Presentable, animation: Animation? = nil) -> Transition {
         return Transition(presentables: [presentable], animation: animation?.presentationAnimation) { options, performer, completion in
             performer.present(
@@ -33,6 +60,15 @@ extension Transition {
         }
     }
 
+    ///
+    /// Transition to embed the given presentable in a specific container (i.e. a view or viewController).
+    ///
+    /// - Parameter presentable:
+    ///     The presentable to be embedded.
+    ///
+    /// - Parameter container:
+    ///     The container to embed the presentable in.
+    ///
     public static func embed(_ presentable: Presentable, in container: Container) -> Transition {
         return Transition(presentables: [presentable], animation: nil) { options, performer, completion in
             performer.embed(
@@ -45,6 +81,15 @@ extension Transition {
         }
     }
 
+    ///
+    /// Transition to call dismiss on the rootViewController. Also take a look at the `dismiss` transition,
+    /// which calls dismiss on the rootViewController's presentedViewController, if present.
+    ///
+    /// - Parameter animation:
+    ///     The animation to be used by the rootViewController's presentedViewController.
+    ///     Specify `nil` to not override its transitioningDelegate or `Animation.default` to fall back to the
+    ///     default UIKit animations.
+    ///
     public static func dismissToRoot(animation: Animation? = nil) -> Transition {
         return Transition(presentables: [], animation: animation?.dismissalAnimation) { options, performer, completion in
             performer.dismiss(
@@ -56,6 +101,15 @@ extension Transition {
         }
     }
 
+    ///
+    /// Transition to call dismiss on the rootViewController's presentedViewController, if present.
+    /// Otherwise, it is equivalent to `dismissToRoot`.
+    ///
+    /// - Parameter animation:
+    ///     The animation to be used by the rootViewController's presentedViewController.
+    ///     Specify `nil` to not override its transitioningDelegate or `Animation.default` to fall back to the
+    ///     default UIKit animations.
+    ///
     public static func dismiss(animation: Animation? = nil) -> Transition {
         return Transition(presentables: [], animation: animation?.dismissalAnimation) { options, performer, completion in
             performer.dismiss(
@@ -67,12 +121,22 @@ extension Transition {
         }
     }
 
+    ///
+    /// No transition at all. May be useful for testing or debugging purposes, or to ignore specific
+    /// routes.
+    ///
     public static func none() -> Transition {
         return Transition(presentables: [], animation: nil) { options, performer, completion in
             completion?()
         }
     }
 
+    ///
+    /// With this transition you can chain multiple transitions of the same type together.
+    ///
+    /// - Parameter transitions:
+    ///     The transitions to be chained to form the new transition.
+    ///
     public static func multiple<C: Collection>(_ transitions: C) -> Transition where C.Element == Transition {
         return Transition(presentables: transitions.flatMap { $0.presentables }, animation: nil) { options, performer, completion in
             guard let firstTransition = transitions.first else {
@@ -90,6 +154,16 @@ extension Transition {
         }
     }
 
+    ///
+    /// Use this transition to trigger a route on another coordinator. TransitionOptions and
+    /// PresentationHandler used during the execution of this transitions are forwarded.
+    ///
+    /// - Parameter route:
+    ///     The route to be triggered on the coordinator.
+    ///
+    /// - Parameter coordinator:
+    ///     The coordinator to trigger the route on.
+    ///
     public static func route<C: Coordinator>(_ route: C.RouteType, on coordinator: C) -> Transition {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables, animation: transition.animation) { options, _, completion in
@@ -97,7 +171,18 @@ extension Transition {
         }
     }
 
-    /// Peeking is not supported with Transition.trigger. If needed, use Transition.route instead.
+    ///
+    /// Use this transition to trigger a route on another router. TransitionOptions and
+    /// PresentationHandler used during the execution of this transitions are forwarded.
+    ///
+    /// Peeking is not supported with this transition. If needed, use the `route` transition instead.
+    ///
+    /// - Parameter route:
+    ///     The route to be triggered on the coordinator.
+    ///
+    /// - Parameter router:
+    ///     The router to trigger the route on.
+    ///
     public static func trigger<R: Router>(_ route: R.RouteType, on router: R) -> Transition {
         return Transition(presentables: [], animation: nil) { options, _, completion in
             router.trigger(route, with: options, completion: completion)
@@ -122,6 +207,16 @@ extension Transition {
 }
 
 extension Coordinator {
+
+    ///
+    /// Use this transition to register 3D Touch Peek and Pop functionality.
+    ///
+    /// - Parameter source:
+    ///     The view to register peek and pop on.
+    ///
+    /// - Parameter route:
+    ///     The route to be triggered for peek and pop.
+    ///
     @available(iOS 9.0, *)
     public func registerPeek<RootViewController>(for source: Container, route: RouteType) -> Transition<RootViewController> where Self.TransitionType == Transition<RootViewController> {
         return .registerPeek(for: source, route: route, coordinator: self)
