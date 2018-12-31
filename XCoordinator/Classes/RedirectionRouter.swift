@@ -26,7 +26,7 @@ open class RedirectionRouter<SuperRoute: Route, RouteType: Route>: Router {
         }
     }
 
-    // MARK: - Init
+    // MARK: - Initialization
 
     public init(viewController: UIViewController, superRouter: AnyRouter<SuperRoute>, map: ((RouteType) -> SuperRoute)?) {
         self.superRouter = superRouter
