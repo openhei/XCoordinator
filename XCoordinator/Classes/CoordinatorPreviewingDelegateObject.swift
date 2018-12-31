@@ -18,7 +18,7 @@ internal class CoordinatorPreviewingDelegateObject<TransitionType: TransitionPro
     private let performer: AnyTransitionPerformer<TransitionType>
     private let completion: PresentationHandler?
 
-    // MARK: - Init
+    // MARK: - Initialization
 
     internal init(transition: @escaping () -> TransitionType, performer: AnyTransitionPerformer<TransitionType>, completion: PresentationHandler?) {
         self.transition = transition
