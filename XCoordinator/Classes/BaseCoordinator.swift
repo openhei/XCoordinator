@@ -103,7 +103,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
     }
 }
 
-// MARK: - BaseCoordinator+UIGestureRecognizer
+// MARK: - Interactive Transitions
 
 extension BaseCoordinator {
     open func registerInteractiveTransition<GestureRecognizer: UIGestureRecognizer>(
